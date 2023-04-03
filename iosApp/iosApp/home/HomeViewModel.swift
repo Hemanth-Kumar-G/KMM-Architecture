@@ -10,7 +10,7 @@ import Foundation
 import shared
 
 extension HomeView {
-   
+    
     public class HomeViewModel: ObservableObject {
         
         @Published var state: VyaparEmployeeState = VyaparEmployeeState(vyaparEmployees: [],
@@ -23,29 +23,27 @@ extension HomeView {
             let getVyaparEmployee = GetVyaparEmployees(repository : EmployeeRepositoryImpl())
             
             
-            DispatchQueue.main.async {
-                
-                getVyaparEmployee.invoke().watch { value in
+            
+            getVyaparEmployee.invoke().watch { value in
+
+                if(value is SharedResourceSuccess){
                     
-                    if(value is SharedResourceSuccess){
-                        
-                        let vyaparEmployees = (value?.data ?? []) as! [VyaparEmployee]
-                        
-                        self.state = VyaparEmployeeState(vyaparEmployees: vyaparEmployees,
-                                                         isLoading: false,
-                                                         isError: false)
-                        
-                    }else if value is SharedResourceError {
-                        self.state = VyaparEmployeeState(vyaparEmployees: [],
-                                                         isLoading: false,
-                                                         isError: true)
-                        
-                    }else  if value is SharedResourceLoading {
-                        self.state = VyaparEmployeeState(vyaparEmployees: [],
-                                                         isLoading: true,
-                                                         isError: true)
-                        
-                    }
+                    let vyaparEmployees = (value?.data ?? []) as! [VyaparEmployee]
+                    
+                    self.state = VyaparEmployeeState(vyaparEmployees: vyaparEmployees,
+                                                     isLoading: false,
+                                                     isError: false)
+                    
+                }else if value is SharedResourceError {
+                    self.state = VyaparEmployeeState(vyaparEmployees: [],
+                                                     isLoading: false,
+                                                     isError: true)
+                    
+                }else  if value is SharedResourceLoading {
+                    self.state = VyaparEmployeeState(vyaparEmployees: [],
+                                                     isLoading: true,
+                                                     isError: true)
+                    
                 }
             }
         }
